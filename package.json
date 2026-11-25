@@ -1,0 +1,14 @@
+{
+  "name": "nested-political-map",
+  "private": true,
+  "description": "One fixed map of the U.S. whose colors read as states, counties or towns depending on distance",
+  "scripts": {
+    "build": "bash build/build.sh",
+    "preview": "python -m http.server 8931 -d docs"
+  },
+  "devDependencies": {
+    "@fontsource-variable/overpass": "^5.3.0",
+    "earcut": "^3.2.4",
+    "mapshaper": "^0.8.10"
+  }
+}

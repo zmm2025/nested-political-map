@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nested political map of the United States</title>
+<meta name="description" content="One fixed picture of the U.S. From far away you see states. Closer, counties. Closer still, towns. No borders are drawn and no color ever changes.">
+<meta property="og:title" content="Nested political map of the United States">
+<meta property="og:description" content="One fixed picture. From far away you see states, closer you see counties, closer still you see towns. No color ever changes.">
+<meta property="og:image" content="https://zmm2025.github.io/nested-political-map/img/card.png">
+<meta property="og:url" content="https://zmm2025.github.io/nested-political-map/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#ecedef">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preload" href="vendor/overpass-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main id="stage">
+  <img id="poster" src="img/poster.webp" width="1600" height="1152" alt="" draggable="false">
+  <canvas id="map" tabindex="0" role="img" aria-label="Map of the United States colored by state, county and town. Drag to pan, scroll or pinch to zoom. Arrow keys, plus and minus also work."></canvas>
+
+  <header class="title">
+    <h1>Nested political map</h1>
+    <p>One fixed picture. No color ever changes, but up close the states turn out to be counties and the counties turn out to be towns.</p>
+  </header>
+
+  <div class="readout" id="readout" hidden>
+    <svg class="nest" viewBox="0 0 64 64" aria-hidden="true"><rect id="n0" width="64" height="64"/><rect id="n1" x="10" y="10" width="44" height="44"/><rect id="n2" x="21" y="21" width="22" height="22"/></svg>
+    <div class="names"><strong id="r2"></strong><span id="r1"></span><span id="r0"></span></div>
+  </div>
+
+  <nav class="zoom" aria-label="Zoom">
+    <button id="zin" aria-label="Zoom in">+</button>
+    <div class="levels" role="group" aria-label="Jump to the distance where a level reads best">
+      <button data-level="town">Towns</button>
+      <button data-level="county">Counties</button>
+      <button data-level="state">States</button>
+      <button data-level="far">Far away</button>
+    </div>
+    <button id="zout" aria-label="Zoom out">&minus;</button>
+  </nav>
+
+  <button class="about" id="openAbout">How it works</button>
+  <p class="status" id="status" role="status">Loading the close-up view</p>
+</main>
+
+<dialog id="about" aria-labelledby="aboutTitle">
+  <div class="sheet">
+    <div class="sheethead"><h2 id="aboutTitle">How it works</h2><button id="closeAbout">Close</button></div>
+
+    <figure class="ladder">
+      <div class="row">
+        <img src="img/w1200.png" width="320" height="230" alt="The map at a large size, where counties are visible">
+        <img src="img/w480.png" width="140" height="101" alt="The same map, smaller">
+        <img src="img/w160.png" width="56" height="40" alt="The same map, tiny, where each state looks like one solid color">
+      </div>
+      <figcaption>The same picture at three sizes. Your eye does the averaging.</figcaption>
+    </figure>
+
+    <p>Every state gets a color, and neighboring states get very different ones. Each county gets its own shade of the state's color, chosen so that neighbors contrast. Each town or township gets a shade near its county's.</p>
+    <p>The shades are balanced. Weighted by area and mixed as light, a county's towns average to that county's color, and a state's counties average to that state's color. When the pieces get too small to see, what is left is the parent's color.</p>
+
+    <h3>One state, taken apart</h3>
+    <figure class="apart">
+      <label>State <select id="pick"></select></label>
+      <div class="bars">
+        <span>State</span><canvas id="b0"></canvas>
+        <span>Counties</span><canvas id="b1"></canvas>
+        <span>Towns</span><canvas id="b2"></canvas>
+      </div>
+      <figcaption>Each strip is the whole state, divided by land area. All three strips have the same average color.</figcaption>
+    </figure>
+
+    <h3>How different neighbors are</h3>
+    <p>These are OKLab distances times 100, measured on the finished 8-bit colors. About 2 is the smallest step people notice side by side.</p>
+    <div class="scroll"><table>
+      <thead><tr><th>Neighbors</th><th>Pairs</th><th>Closest pair</th><th>Typical</th></tr></thead>
+      <tbody id="metrics"></tbody>
+    </table></div>
+    <p id="drift"></p>
+
+    <h3>Choosing the colors</h3>
+    <p>There are six state colors: red, amber, green, teal, blue and violet. Each has its own lightness as well as its own hue, so neighbors stay apart for people with red-green color blindness (<span id="cvd"></span>). County and town colors come from an optimizer working in OKLab. It pushes neighbors apart while holding each state's hue, the range a screen can show, and the averages.</p>
+
+    <h3>Why towns and not cities</h3>
+    <p id="cities"></p>
+    <p>The Census Bureau's county subdivisions do nest perfectly. In the Northeast and Midwest they are real towns and townships. Elsewhere many are areas drawn for statistics, so some names may look unfamiliar, and a large city can be split across several.</p>
+
+    <h3>Notes</h3>
+    <ul>
+      <li>Borders are the 2025 Census cartographic boundary files at 1:500,000, so Connecticut shows its nine planning regions.</li>
+      <li>The lower 48 states and Hawaii share one equal-area scale. So do Guam and the Northern Marianas. Alaska is at 35%. Puerto Rico, the U.S. Virgin Islands and American Samoa are at 150%. Hawaii's remote northwestern atolls are left out.</li>
+      <li>City blocks, tracts and other finer Census areas are not included.</li>
+    </ul>
+    <p class="links"><a href="img/us-nested-map.png" download>Download the picture (9600 &times; 6912 PNG, 6 MB)</a><a href="https://github.com/zmm2025/nested-political-map">Source code</a></p>
+  </div>
+</dialog>
+<script src="app.js" type="module"></script>
+</body>
+</html>
