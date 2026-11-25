@@ -13,12 +13,14 @@
 <meta name="theme-color" content="#ecedef">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preload" href="vendor/overpass-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="img/overview.webp" as="image" type="image/webp">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <main id="stage">
-  <img id="poster" src="img/poster.webp" width="1600" height="1152" alt="" draggable="false">
   <canvas id="map" tabindex="0" role="img" aria-label="Map of the United States colored by state, county and town. Drag to pan, scroll or pinch to zoom. Arrow keys, plus and minus also work."></canvas>
+  <canvas id="flat" hidden aria-hidden="true"></canvas>
+  <noscript><img src="img/overview.webp" alt="Map of the United States" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain"></noscript>
 
   <header class="title">
     <h1>Nested political map</h1>
@@ -42,7 +44,7 @@
   </nav>
 
   <button class="about" id="openAbout">How it works</button>
-  <p class="status" id="status" role="status">Loading the close-up view</p>
+  <p class="status" id="status" role="status">Loading borders</p>
 </main>
 
 <dialog id="about" aria-labelledby="aboutTitle">

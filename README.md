@@ -28,6 +28,10 @@ Cities are not a level because they do not nest: 1,110 of 19,558 incorporated pl
 - [docs/img/us-nested-map.png](docs/img/us-nested-map.png) is the 9600 × 6912 picture.
 - [build/](build) makes both from the Census downloads: [prep.py](build/prep.py) projects, [graph.py](build/graph.py) finds neighbors, [colors.py](build/colors.py) solves the colors, [pack.py](build/pack.py) and [images.py](build/images.py) write the output.
 
+## How it is drawn
+
+Phones close tabs that are greedy with graphics memory, so the viewer keeps memory small and steady: the averaged picture from far away, one light mesh in the middle, and full detail only for the states on screen, up to a fixed budget. Nothing is allocated while a gesture is running. If WebGL is missing or taken away, the still picture takes over.
+
 ## Rebuild
 
 Needs Node, Python 3, bash, curl and unzip. Takes about five minutes.

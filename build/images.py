@@ -16,8 +16,8 @@ big = np.concatenate([shrink(colorize(ids[y:y + 192], rgb), 2) for y in range(0,
 del ids
 print(big.shape)
 Image.fromarray(big).save(f"{out}/us-nested-map.png", optimize=True)
-poster = shrink(big, 6)
-Image.fromarray(poster).save(f"{out}/poster.webp", lossless=True, method=6)
+# the viewer draws this one while towns are too small to resolve
+Image.fromarray(shrink(big, 4)).save(f"{out}/overview.webp", lossless=True, method=6)
 for f, name in ((8, "w1200"), (20, "w480"), (60, "w160")):
     Image.fromarray(shrink(big, f)).save(f"{out}/{name}.png", optimize=True)
 # social card: 1200x630 with the map centred
