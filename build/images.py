@@ -1,4 +1,4 @@
-"""Write the static renders: one big PNG and the same picture scaled down.
+"""Write the pictures the site uses: one big render, scaled down to each size.
 
 usage: python images.py <topo.json> <colors.npz> <out-dir>
 """
@@ -15,7 +15,6 @@ rows = ids.shape[0] // 192 * 192
 big = np.concatenate([shrink(colorize(ids[y:y + 192], rgb), 2) for y in range(0, rows, 192)])
 del ids
 print(big.shape)
-Image.fromarray(big).save(f"{out}/us-nested-map.png", optimize=True)
 # the viewer draws this one while towns are too small to resolve
 Image.fromarray(shrink(big, 4)).save(f"{out}/overview.webp", lossless=True, method=6)
 for f, name in ((8, "w1200"), (20, "w480"), (60, "w160")):

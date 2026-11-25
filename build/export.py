@@ -1,10 +1,9 @@
-"""Render the whole map as one very large PNG, a strip at a time.
+"""Render the whole map as one 4K PNG, a strip at a time.
 
 usage: python export.py <topo.json> <colors.npz> <out.png> [width]
 
-The size is the largest that ordinary software still opens. Each output pixel is four
-samples averaged in linear light. Rows are written as they are finished, so memory
-stays small whatever the size.
+Each output pixel is 64 samples averaged in linear light. Rows are written as they are
+finished, so memory stays small whatever the size.
 """
 import struct, sys, time, zlib
 import numpy as np
@@ -13,8 +12,8 @@ from graph import load, ring_xy, shoelace
 from raster import BG
 
 BOX = (-2396.0, -1586.0, 2272.0, 1781.0)   # the land plus 20 km; tighter than the site's picture
-WIDTH = 27264   # 536 megapixels. Browsers and Windows refuse any image past 2^29 pixels
-SS = 2          # samples per pixel, each way
+WIDTH = 3840    # 4K on the long side
+SS = 8          # samples per pixel, each way
 ROWS = 240      # output rows per strip
 
 

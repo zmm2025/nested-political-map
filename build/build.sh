@@ -15,5 +15,5 @@ $PY build/graph.py "$W/topo.json" "$W/graph.npz"
 $PY build/colors.py "$W/graph.npz" "$W/colors.npz"
 $PY build/pack.py "$W/topo.json" "$W/names.json" "$W/graph.npz" "$W/colors.npz" "$W/places.txt" docs/map.bin
 $PY build/images.py "$W/topo.json" "$W/colors.npz" docs/img
-$PY build/export.py "$W/topo.json" "$W/colors.npz" docs/img/us-nested-map-full.png
+$PY build/export.py "$W/topo.json" "$W/colors.npz" docs/img/us-nested-map-4k.png
 cp node_modules/earcut/dist/earcut.min.js docs/vendor/
