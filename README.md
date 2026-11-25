@@ -25,8 +25,9 @@ Cities are not a level because they do not nest: 1,110 of 19,558 incorporated pl
 
 - [docs/](docs) is the site: plain HTML, CSS and JavaScript with no build step of its own.
 - [docs/map.bin](docs/map.bin) is the gzipped geometry, colors and names.
-- [docs/img/us-nested-map.png](docs/img/us-nested-map.png) is the 9600 × 6912 picture.
-- [build/](build) makes both from the Census downloads: [prep.py](build/prep.py) projects, [graph.py](build/graph.py) finds neighbors, [colors.py](build/colors.py) solves the colors, [pack.py](build/pack.py) and [images.py](build/images.py) write the output.
+- [docs/img/us-nested-map-full.png](docs/img/us-nested-map-full.png) is the exported picture, 27264 × 19665. That is just under 2^29 pixels, the most that browsers and Windows will open.
+- [docs/img/us-nested-map.png](docs/img/us-nested-map.png) is a smaller 9600 × 6912 version.
+- [build/](build) makes both from the Census downloads: [prep.py](build/prep.py) projects, [graph.py](build/graph.py) finds neighbors, [colors.py](build/colors.py) solves the colors, [pack.py](build/pack.py), [images.py](build/images.py) and [export.py](build/export.py) write the output.
 
 ## How it is drawn
 

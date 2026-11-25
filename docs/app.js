@@ -478,6 +478,18 @@ for (const b of levelButtons) b.onclick = () => {
   flyTo({ x: wide ? 560 : cam.x, y: wide ? -40 : cam.y, k });
 };
 
+// The export is a file made in advance, so it is always the whole map and never
+// depends on the zoom or on how much memory this device has.
+let noteTimer = 0;
+$('export').addEventListener('click', () => {
+  status.textContent = touchy
+    ? 'Downloading the whole map (27264 × 19665, 20 MB). If your phone cannot open a picture this big, a smaller one is under How it works.'
+    : 'Downloading the whole map (27264 × 19665, 20 MB).';
+  status.hidden = false;
+  clearTimeout(noteTimer);
+  noteTimer = setTimeout(() => { status.hidden = true; }, touchy ? 8000 : 5000);
+});
+
 // ---------------------------------------------------------------- the sheet
 $('openAbout').onclick = () => { letGo(); about.showModal(); if (data) { $('pick').value = lastState >= 0 ? lastState : $('pick').value; bars(); } };
 $('closeAbout').onclick = () => about.close();
@@ -543,7 +555,7 @@ picture.onerror = () => { if (tries++ < 4) setTimeout(() => { picture.src = 'img
 picture.src = 'img/overview.webp';
 
 const fail = (msg) => { status.hidden = false; status.textContent = `Close-up borders could not load (${msg}). This is the still picture instead.`; };
-const worker = new Worker('worker.js?v=2');
+const worker = new Worker('worker.js?v=3');
 worker.onerror = (e) => { waiting = -1; fail(e.message || 'worker error'); };
 worker.onmessage = ({ data: d }) => {
   if (d.type === 'error') { waiting = -1; if (!data) fail(d.error); return; }

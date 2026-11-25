@@ -3,7 +3,7 @@ import numpy as np
 from PIL import Image, ImageDraw
 from graph import load, ring_xy
 
-BOX = (-2460.0, -1650.0, 2340.0, 1846.0)   # layout window, km
+BOX = (-2460.0, -1650.0, 2340.0, 1806.0)   # layout window, km
 BG = (236, 237, 239)
 
 
