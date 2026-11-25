@@ -480,13 +480,80 @@ for (const b of levelButtons) b.onclick = () => {
 
 // The export is a file made in advance, so it is always the whole map and never
 // depends on the zoom or on how much memory this device has.
-let noteTimer = 0;
-$('export').addEventListener('click', () => {
-  status.textContent = 'Downloading the whole map (3840 × 2770).';
-  status.hidden = false;
+//   mouse    an ordinary download
+//   iPhone   the system share sheet, which has "Save Image"
+//   Android  the picture itself, to press and hold: its share sheet cannot save
+const IMAGE = 'img/us-nested-map-4k.png', IMAGE_NAME = 'nested-political-map-4k.png';
+let noteTimer = 0, image = null, fetching = null, sharing = false;
+function note(text, ms) {
+  status.textContent = text; status.hidden = false;
   clearTimeout(noteTimer);
-  noteTimer = setTimeout(() => { status.hidden = true; }, 4000);
-});
+  if (ms) noteTimer = setTimeout(() => { status.hidden = true; }, ms);
+}
+const unnote = () => { clearTimeout(noteTimer); status.hidden = true; };
+const canShareImage = (() => {
+  if (/Android/i.test(navigator.userAgent)) return false;
+  try { return !!navigator.share && navigator.canShare({ files: [new File([new Uint8Array(1)], IMAGE_NAME, { type: 'image/png' })] }); } catch { return false; }
+})();
+function getImage() {
+  fetching ||= (async () => {
+    for (let n = 0; ; n++) {
+      try {
+        const res = await fetch(IMAGE);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return new File([await res.blob()], IMAGE_NAME, { type: 'image/png' });
+      } catch (e) {
+        if (n >= 2) throw e;
+        await new Promise((r) => setTimeout(r, 500 * 2 ** n));
+      }
+    }
+  })().then((f) => { image = f; return f; }, (e) => { fetching = null; throw e; });
+  return fetching;
+}
+async function shareImage() {
+  if (sharing) return;
+  sharing = true;
+  $('saveReady').hidden = true;
+  try {
+    if (!image) { note('Getting the image', 0); await getImage(); }
+    unnote();
+    // files only: adding a title or link makes iOS drop "Save Image" from the sheet
+    await navigator.share({ files: [image] });
+  } catch (e) {
+    unnote();
+    if (e.name === 'AbortError') return;                   // closed the sheet
+    if (!image) { note('Could not get the image. Check your connection and try again.', 5000); return; }
+    // too long since the tap for the browser to allow it: the image is here now, ask again
+    if (e.name === 'NotAllowedError' && !$('saveReady').dataset.again) { $('saveReady').dataset.again = '1'; offer(); return; }
+    showShot();
+  } finally { sharing = false; }
+}
+function offer() {
+  if (about.open) about.close();                           // the button sits under the sheet
+  $('saveReady').hidden = false;
+}
+function showShot() {
+  if (about.open) about.close();
+  $('shotImg').src = IMAGE;
+  $('shot').showModal();
+}
+for (const el of document.querySelectorAll('.getimage')) {
+  if (touchy && canShareImage) el.addEventListener('pointerdown', () => { getImage().catch(() => {}); });   // a head start
+  el.addEventListener('click', (e) => {
+    if (!touchy) { note('Downloading the whole map (3840 × 2770).', 4000); return; }
+    e.preventDefault();
+    if (!canShareImage) { showShot(); return; }
+    delete $('saveReady').dataset.again;
+    shareImage();
+  });
+}
+$('saveReady').onclick = shareImage;
+$('closeShot').onclick = () => $('shot').close();
+$('shot').addEventListener('click', (e) => { if (e.target === $('shot')) $('shot').close(); });
+if (touchy) {
+  $('export').setAttribute('aria-label', 'Save or share the whole map as a 4K image');
+  $('export').removeAttribute('title');
+}
 
 // ---------------------------------------------------------------- the sheet
 $('openAbout').onclick = () => { letGo(); about.showModal(); if (data) { $('pick').value = lastState >= 0 ? lastState : $('pick').value; bars(); } };
@@ -553,7 +620,7 @@ picture.onerror = () => { if (tries++ < 4) setTimeout(() => { picture.src = 'img
 picture.src = 'img/overview.webp';
 
 const fail = (msg) => { status.hidden = false; status.textContent = `Close-up borders could not load (${msg}). This is the still picture instead.`; };
-const worker = new Worker('worker.js?v=4');
+const worker = new Worker('worker.js?v=5');
 worker.onerror = (e) => { waiting = -1; fail(e.message || 'worker error'); };
 worker.onmessage = ({ data: d }) => {
   if (d.type === 'error') { waiting = -1; if (!data) fail(d.error); return; }
