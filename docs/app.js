@@ -543,7 +543,7 @@ picture.onerror = () => { if (tries++ < 4) setTimeout(() => { picture.src = 'img
 picture.src = 'img/overview.webp';
 
 const fail = (msg) => { status.hidden = false; status.textContent = `Close-up borders could not load (${msg}). This is the still picture instead.`; };
-const worker = new Worker('worker.js');
+const worker = new Worker('worker.js?v=2');
 worker.onerror = (e) => { waiting = -1; fail(e.message || 'worker error'); };
 worker.onmessage = ({ data: d }) => {
   if (d.type === 'error') { waiting = -1; if (!data) fail(d.error); return; }
